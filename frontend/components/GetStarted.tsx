@@ -1,0 +1,130 @@
+import { useState } from 'react'
+import Image from 'next/image'
+import { FiBook, FiCheckCircle, FiZap } from 'react-icons/fi'
+import { useRouter } from 'next/router'
+import { loginWithGoogle } from '@/lib/firebase'
+import { useAuthStore } from '@/lib/store'
+import { saveUser } from '@/lib/api'
+
+export default function GetStarted() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [currentStep, setCurrentStep] = useState(0)
+  const setUser = useAuthStore(state => state.setUser)
+  const setFirstLogin = useAuthStore(state => state.setFirstLogin)
+
+  const steps = [
+    { icon: FiBook, title: 'Daily Lectures', description: 'Live YouTube lectures updated daily' },
+    { icon: FiCheckCircle, title: 'Daily MCQs', description: 'Practice with curated questions' },
+    { icon: FiZap, title: 'AI Mentor', description: 'Personalized guidance & feedback' },
+  ]
+
+  const handleGoogleLogin = async () => {
+    setLoading(true)
+    try {
+      const firebaseUser = await loginWithGoogle()
+      
+      const userData = {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        photoURL: firebaseUser.photoURL,
+        isFirstLogin: false,
+        createdAt: new Date(),
+      }
+
+      await saveUser(userData)
+      
+      setUser({
+        uid: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        displayName: firebaseUser.displayName || '',
+        photoURL: firebaseUser.photoURL || '',
+      })
+      
+      setFirstLogin(false)
+      router.push('/')
+    } catch (error) {
+      console.error('Login failed:', error)
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-primary via-primary to-accent flex flex-col items-center justify-center px-6 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-secondary opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent opacity-10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 animate-pulse"></div>
+
+      <div className="relative z-10 text-center max-w-md">
+        {/* Logo */}
+        <div className="mb-8 flex justify-center">
+          <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-2xl animate-fadeIn">
+            <span className="text-5xl">⚕️</span>
+          </div>
+        </div>
+
+        {/* Main Tagline */}
+        <h1 className="text-4xl font-bold text-white mb-3 animate-slideUp">
+          Your NEET Rank Starts Here
+        </h1>
+        
+        <p className="text-secondary text-lg mb-12 animate-slideUp" style={{ animationDelay: '0.1s' }}>
+          Soul of Medico - The complete NEET preparation platform
+        </p>
+
+        {/* Steps Animation */}
+        <div className="mb-12 space-y-4">
+          {steps.map((step, index) => {
+            const Icon = step.icon
+            return (
+              <div
+                key={index}
+                className={`p-4 rounded-lg backdrop-blur-md transition-all duration-500 ${
+                  currentStep === index
+                    ? 'bg-white bg-opacity-20 scale-105'
+                    : 'bg-white bg-opacity-10 hover:bg-opacity-15'
+                }`}
+                onMouseEnter={() => setCurrentStep(index)}
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <Icon className="w-6 h-6 text-secondary flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-white">{step.title}</p>
+                    <p className="text-sm text-secondary opacity-80">{step.description}</p>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Login Button */}
+        <button
+          onClick={handleGoogleLogin}
+          disabled={loading}
+          className="w-full bg-white text-primary font-bold py-4 px-6 rounded-lg transition-all duration-300 hover:shadow-2xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 animate-slideUp"
+          style={{ animationDelay: '0.2s' }}
+        >
+          {loading ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-primary"></div>
+              Signing in...
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <text x="0" y="20" fontSize="20" fill="#0052CC">G</text>
+              </svg>
+              Continue with Google
+            </>
+          )}
+        </button>
+
+        <p className="text-white text-sm mt-6 opacity-70">
+          Secure login with your Google account. No spam, we promise!
+        </p>
+      </div>
+    </div>
+  )
+}

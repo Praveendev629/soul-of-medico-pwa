@@ -2,15 +2,16 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-import * as admin from 'firebase-admin'
+import admin from 'firebase-admin'
 
-import authRoutes from './routes/auth'
-import lectureRoutes from './routes/lectures'
-import mcqRoutes from './routes/mcq'
-import notesRoutes from './routes/notes'
-import testRoutes from './routes/tests'
-import performanceRoutes from './routes/performance'
-import adminRoutes from './routes/admin'
+import authRoutes from './routes/auth.js'
+import lectureRoutes from './routes/lectures.js'
+import mcqRoutes from './routes/mcq.js'
+import notesRoutes from './routes/notes.js'
+import testRoutes from './routes/tests.js'
+import performanceRoutes from './routes/performance.js'
+import adminRoutes from './routes/admin.js'
+
 
 dotenv.config()
 
@@ -25,12 +26,15 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }))
 // Initialize Firebase Admin
 if (!admin.apps.length) {
   admin.initializeApp({
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  })
+    credential: admin.credential.cert({
+      project_id: process.env.FIREBASE_PROJECT_ID as string,
+      client_email: process.env.FIREBASE_CLIENT_EMAIL as string,
+      private_key: process.env.FIREBASE_PRIVATE_KEY
+        ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n")
+        : undefined,
+    }),
+  });
 }
-
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/soulofmedico')

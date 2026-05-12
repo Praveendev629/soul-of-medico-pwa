@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { FiBook } from 'react-icons/fi'
 
 interface SubjectCard {
   id: string
@@ -59,7 +58,7 @@ export default function NotesPage() {
             onClick={() => setSelectedSubject(null)}
             className="mb-4 text-primary font-semibold hover:underline flex items-center gap-1"
           >
-            <span>←</span> Back
+            ← Back
           </button>
 
           <h2 className="text-xl font-bold mb-4">
@@ -72,7 +71,7 @@ export default function NotesPage() {
                 <h3 className="font-bold text-lg mb-2">{lesson.title}</h3>
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-gray-600">
-                    <FiBook className="inline mr-1" /> {lesson.sections} sections
+                    📄 {lesson.sections} sections
                   </p>
                   <div className="flex gap-2">
                     <button className="px-3 py-1 bg-blue-50 text-primary rounded text-sm font-medium hover:bg-blue-100 transition">

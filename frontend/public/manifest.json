@@ -1,33 +1,22 @@
 {
   "name": "Soul of Medico - NEET Preparation",
   "short_name": "Soul of Medico",
-  "description": "Your NEET Rank Starts Here - Comprehensive NEET preparation platform with live lectures, MCQs, and AI mentoring",
+  "description": "Your NEET Rank Starts Here",
   "start_url": "/",
-  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0052CC",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/logo-192.png",
+      "src": "/logo.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "/logo-512.png",
+      "src": "/logo.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/screenshot1.png",
-      "sizes": "540x720",
-      "type": "image/png",
-      "form_factor": "narrow"
+      "type": "image/png"
     }
   ]
 }

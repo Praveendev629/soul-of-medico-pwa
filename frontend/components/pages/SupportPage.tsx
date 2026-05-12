@@ -1,8 +1,8 @@
-import { FiMail, FiPhone, FiExternalLink } from 'react-icons/fi'
+import { FiExternalLink } from 'react-icons/fi'
 
 interface SupportChannel {
   name: string
-  icon: React.ReactNode
+  icon: string
   description: string
   link: string
   color: string
@@ -12,36 +12,36 @@ export default function SupportPage() {
   const channels: SupportChannel[] = [
     {
       name: 'Telegram',
-      icon: <span className="text-2xl">✉️</span>,
+      icon: '✉️',
       description: 'Join our community group',
       link: 'https://t.me/soulofmedico',
       color: 'bg-blue-50 border-blue-200',
     },
     {
       name: 'WhatsApp',
-      icon: <span className="text-2xl">💬</span>,
+      icon: '💬',
       description: 'Quick support & updates',
       link: 'https://wa.me/919876543210',
       color: 'bg-green-50 border-green-200',
     },
     {
       name: 'Email',
-      icon: <FiMail className="w-6 h-6" />,
+      icon: '📧',
       description: 'Detailed queries & feedback',
       link: 'mailto:support@soulofmedico.com',
       color: 'bg-purple-50 border-purple-200',
     },
     {
       name: 'Website',
-      icon: <FiExternalLink className="w-6 h-6" />,
+      icon: '🌐',
       description: 'Visit our website',
       link: 'https://soulofmedico.com',
       color: 'bg-orange-50 border-orange-200',
     },
     {
-      name: 'Google Form',
-      icon: <span className="text-2xl">📋</span>,
-      description: 'Feedback & suggestions',
+      name: 'Feedback Form',
+      icon: '📋',
+      description: 'Share your feedback',
       link: 'https://forms.gle/soulofmedico',
       color: 'bg-red-50 border-red-200',
     },
@@ -53,7 +53,7 @@ export default function SupportPage() {
 
       <div className="bg-blue-50 border border-primary rounded-lg p-4">
         <p className="text-sm text-gray-700">
-          Have questions or need help? Reach out to us through any of the channels below. We're here to help you succeed in NEET!
+          Have questions or need help? Reach out through any channel below. We're here to help!
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export default function SupportPage() {
             className={`block p-4 rounded-lg border ${channel.color} hover:shadow-lg transition transform hover:scale-105`}
           >
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 text-2xl">
                 {channel.icon}
               </div>
               <div className="flex-1">

@@ -1,4 +1,4 @@
-import { FiBarChart3 } from 'react-icons/fi'
+import { FiAward } from 'react-icons/fi'
 
 const mockTests = [
   {

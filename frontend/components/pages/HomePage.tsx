@@ -1,4 +1,4 @@
-import { FiTrendingUp, FiTarget, FiBook, FiPlay } from 'react-icons/fi'
+import { FiTrendingUp, FiTarget, FiBook } from 'react-icons/fi'
 
 interface HomePageProps {
   user: any
@@ -60,7 +60,7 @@ export default function HomePage({ user }: HomePageProps) {
             <div key={lecture._id} className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg transition">
               <div className="flex gap-3">
                 <div className="w-24 h-24 bg-gray-300 flex-shrink-0 flex items-center justify-center text-3xl">
-                  📚
+                  🎥
                 </div>
                 
                 <div className="flex-1 p-3">

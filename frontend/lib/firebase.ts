@@ -7,7 +7,6 @@ import {
   onAuthStateChanged as firebaseOnAuthStateChanged,
   User
 } from 'firebase/auth'
-import { getMessaging, getToken } from 'firebase/messaging'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -18,47 +17,49 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-let app: ReturnType<typeof initializeApp> | null = null
+let app = null
 
 export const initializeFirebase = () => {
-  if (!app) {
+  if (!app && firebaseConfig.apiKey) {
     app = initializeApp(firebaseConfig)
   }
   return app
 }
 
-export const getFirebaseAuth = () => getAuth(initializeFirebase())
+export const getFirebaseAuth = () => {
+  const app = initializeFirebase()
+  if (!app) throw new Error('Firebase not initialized')
+  return getAuth(app)
+}
 
 export const loginWithGoogle = async () => {
-  const auth = getFirebaseAuth()
-  const provider = new GoogleAuthProvider()
-  const result = await signInWithPopup(auth, provider)
-  return result.user
+  try {
+    const auth = getFirebaseAuth()
+    const provider = new GoogleAuthProvider()
+    const result = await signInWithPopup(auth, provider)
+    return result.user
+  } catch (error) {
+    console.error('Firebase login error:', error)
+    throw error
+  }
 }
 
 export const signOut = async () => {
-  const auth = getFirebaseAuth()
-  return firebaseSignOut(auth)
+  try {
+    const auth = getFirebaseAuth()
+    return firebaseSignOut(auth)
+  } catch (error) {
+    console.error('Firebase signout error:', error)
+    throw error
+  }
 }
 
 export const onAuthStateChanged = (callback: (user: User | null) => void) => {
-  const auth = getFirebaseAuth()
-  return firebaseOnAuthStateChanged(auth, callback)
-}
-
-export const getNotificationToken = async () => {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    return null
-  }
-
   try {
-    const messaging = getMessaging(initializeFirebase())
-    const token = await getToken(messaging, {
-      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
-    })
-    return token
+    const auth = getFirebaseAuth()
+    return firebaseOnAuthStateChanged(auth, callback)
   } catch (error) {
-    console.error('Failed to get notification token:', error)
-    return null
+    console.error('Auth state change error:', error)
+    return () => {}
   }
 }

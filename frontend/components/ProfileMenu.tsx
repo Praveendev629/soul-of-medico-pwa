@@ -1,4 +1,7 @@
+import { useRouter } from 'next/router'
 import { FiLogOut, FiSettings } from 'react-icons/fi'
+import { signOut } from '../lib/firebase'
+import { useAuthStore } from '../lib/store'
 
 interface ProfileMenuProps {
   user: any
@@ -6,17 +9,25 @@ interface ProfileMenuProps {
 }
 
 export default function ProfileMenu({ user, onClose }: ProfileMenuProps) {
-  const handleLogout = () => {
-    localStorage.removeItem('user')
-    localStorage.removeItem('isFirstLogin')
-    window.location.reload()
+  const router = useRouter()
+  const logout = useAuthStore(state => state.logout)
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      logout()
+      router.push('/')
+      onClose()
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
   }
 
   return (
     <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden z-50">
       <div className="bg-primary text-white p-4">
         <p className="font-semibold">{user?.displayName || 'User'}</p>
-        <p className="text-sm opacity-90">{user?.email || 'user@example.com'}</p>
+        <p className="text-sm opacity-90">{user?.email}</p>
       </div>
 
       <div className="py-2">

@@ -19,7 +19,7 @@ export default function MainApp({ user }: MainAppProps) {
 
   const renderPage = () => {
     switch (activeTab) {
-      case 'test': return <TestSeriesPage />
+      case 'test': return <TestSeriesPage userId={user?.uid} />
       case 'notes': return <NotesPage />
       case 'home': return <HomePage user={user} />
       case 'ai': return <AIMentorPage />
@@ -39,9 +39,17 @@ export default function MainApp({ user }: MainAppProps) {
               onClick={() => setShowProfile(!showProfile)}
               className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-lg transition"
             >
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">
-                {user?.displayName?.charAt(0) || 'U'}
-              </div>
+              {user?.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full"
+                />
+              ) : (
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">
+                  {user?.displayName?.charAt(0) || 'U'}
+                </div>
+              )}
             </button>
 
             {showProfile && (

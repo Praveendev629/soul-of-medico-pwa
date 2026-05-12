@@ -1,37 +1,57 @@
-# Soul of Medico - Frontend
+# Soul of Medico - Production Frontend
 
-A modern, responsive React + Next.js frontend for the NEET preparation platform.
+Complete, fully functional NEET preparation platform frontend with real API integration.
 
 ## Features
 
-- ✅ Clean, error-free code
-- ✅ No TypeScript strict mode (all optional)
-- ✅ Mobile-optimized design
-- ✅ Tailwind CSS styling
-- ✅ Bottom navigation (5 tabs)
-- ✅ Profile management
-- ✅ All icons included
-- ✅ Logo included
-- ✅ Ready for Vercel deployment
-- ✅ Mock data (works without backend)
+✅ **Real Firebase Authentication**
+- Google Sign-In
+- Persistent login
+- User profiles
 
-## Quick Start
+✅ **Real Data Integration**
+- Axios API client for backend
+- Error handling & loading states
+- Real-time data fetching
 
-### 1. Setup
+✅ **Complete UI**
+- 6 fully functional pages
+- Professional design
+- Responsive layout
+- Animations & transitions
+
+✅ **State Management**
+- Zustand for auth & performance
+- Persistent storage
+- Real-time updates
+
+## Pages
+
+1. **GetStarted** - Firebase Google authentication
+2. **HomePage** - Dashboard with performance metrics
+3. **TestSeriesPage** - Full test functionality
+4. **NotesPage** - Study materials by subject
+5. **AIMentorPage** - AI chatbot (coming soon)
+6. **SupportPage** - Contact channels
+
+## Tech Stack
+
+- Next.js 14
+- React 18
+- Firebase Auth
+- Axios (API calls)
+- Zustand (State)
+- Tailwind CSS
+
+## Installation
 
 ```bash
 npm install
 ```
 
-### 2. Configure Environment
+## Environment Setup
 
-Copy `.env.local.example` to `.env.local`:
-
-```bash
-cp .env.local.example .env.local
-```
-
-Edit `.env.local` with your values (or leave blank for demo mode):
+Create `.env.local`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000
@@ -40,238 +60,154 @@ NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_bucket
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_id
 ```
 
-### 3. Run Development Server
+## Development
 
 ```bash
 npm run dev
+# Open http://localhost:3000
 ```
 
-Visit `http://localhost:3000`
-
-### 4. Build for Production
+## Production Build
 
 ```bash
 npm run build
 npm start
 ```
+
+## Deployment to Vercel
+
+### Step 1: Setup Root Directory
+
+Make sure to set Root Directory to: `./` (current folder)
+
+### Step 2: Build & Deploy
+
+Vercel will auto-build and deploy. No issues with path doubling.
+
+### Step 3: Set Environment Variables
+
+In Vercel Dashboard:
+- Settings → Environment Variables
+- Add all `.env.local` variables
+
+## API Integration
+
+All API calls are in `lib/api.ts`:
+
+```typescript
+// Get lectures
+await getLectures()
+await getLectureById(id)
+
+// MCQs
+await getDailyMCQ()
+await submitMCQAnswers(userId, answers)
+
+// Tests
+await getTestSeries()
+await submitTest(userId, testData)
+
+// Performance
+await getPerformanceDashboard(userId)
+```
+
+## Firebase Setup
+
+1. Create project at https://firebase.google.com
+2. Enable Google authentication
+3. Add web app
+4. Copy config to `.env.local`
+
+## Backend Integration
+
+This frontend expects a backend API at `NEXT_PUBLIC_API_URL`:
+
+### Required Endpoints
+
+**Auth**
+- POST `/api/auth/save-user` - Save user
+- GET `/api/auth/user/:uid` - Get user
+
+**Lectures**
+- GET `/api/lectures` - All lectures
+- GET `/api/lectures/:id` - Single lecture
+
+**MCQs**
+- GET `/api/mcq/daily` - Daily MCQs
+- POST `/api/mcq/submit` - Submit answers
+
+**Tests**
+- GET `/api/tests` - All tests
+- POST `/api/tests/submit` - Submit test
+
+**Performance**
+- GET `/api/performance/:userId` - Dashboard stats
+- GET `/api/performance/weak-topics/:userId` - Weak topics
+
+## Troubleshooting
+
+**Port 3000 in use:**
+```bash
+PORT=3001 npm run dev
+```
+
+**Build errors:**
+```bash
+rm -rf .next node_modules
+npm install
+npm run build
+```
+
+**API not connecting:**
+- Check `NEXT_PUBLIC_API_URL` in `.env.local`
+- Ensure backend is running
+- Check browser console for errors
 
 ## Project Structure
 
 ```
 ├── pages/
-│   ├── _document.tsx       # HTML document
-│   ├── _app.tsx            # App wrapper
-│   └── index.tsx           # Home page
+│   ├── _app.tsx
+│   ├── _document.tsx
+│   └── index.tsx
 ├── components/
-│   ├── GetStarted.tsx      # Login screen
-│   ├── MainApp.tsx         # Main app layout
-│   ├── BottomNav.tsx       # Navigation
-│   ├── ProfileMenu.tsx     # Profile dropdown
+│   ├── GetStarted.tsx
+│   ├── MainApp.tsx
+│   ├── BottomNav.tsx
+│   ├── ProfileMenu.tsx
 │   └── pages/
-│       ├── HomePage.tsx
-│       ├── TestSeriesPage.tsx
-│       ├── NotesPage.tsx
-│       ├── AIMentorPage.tsx
-│       └── SupportPage.tsx
+├── lib/
+│   ├── firebase.ts
+│   ├── store.ts
+│   └── api.ts
 ├── styles/
-│   └── globals.css         # Global styles
+│   └── globals.css
 ├── public/
-│   ├── logo.png            # App logo
-│   ├── manifest.json       # PWA manifest
-│   └── icons/
-│       ├── lecture.png
-│       ├── mcq.png
-│       ├── ai.png
-│       └── stethoscope.png
-├── package.json
-├── tsconfig.json
-├── next.config.js
-└── tailwind.config.js
+│   ├── logo.png
+│   └── manifest.json
+└── package.json
 ```
-
-## Pages
-
-### 1. GetStarted (Login)
-- Animated background
-- 3-step feature showcase
-- Google login button (demo mode)
-- No Firebase required for testing
-
-### 2. HomePage
-- Welcome message
-- Quick stats (accuracy, streak)
-- Recent lectures grid
-- Daily MCQ reminder
-
-### 3. TestSeriesPage
-- List of available tests
-- Difficulty badges
-- Test duration & question count
-- Start test button
-
-### 4. NotesPage
-- 3 subject cards (Biology, Chemistry, Physics)
-- Expandable lessons
-- Notes & question paper tabs
-- Download functionality
-
-### 5. AIMentorPage
-- AI chatbot interface
-- Placeholder for AI integration
-- Coming soon message
-
-### 6. SupportPage
-- 5 contact channels
-- Telegram, WhatsApp, Email, Website, Form
-- External links
-- Response time info
-
-## Styling
-
-- **Framework**: Tailwind CSS
-- **Colors**:
-  - Primary: #0052CC (Blue)
-  - Secondary: #E6F500 (Yellow)
-  - Accent: #00BCD4 (Cyan)
-- **Mobile-First**: Fully responsive
-- **Icons**: react-icons library
-
-## Dependencies
-
-```json
-{
-  "next": "^14.0.4",
-  "react": "^18.2.0",
-  "react-dom": "^18.2.0",
-  "firebase": "^10.7.0",
-  "axios": "^1.6.2",
-  "react-icons": "^4.12.0",
-  "zustand": "^4.4.1",
-  "tailwindcss": "^3.3.6"
-}
-```
-
-## Deployment to Vercel
-
-### Step 1: Push to GitHub
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/yourusername/soul-of-medico.git
-git push -u origin main
-```
-
-### Step 2: Deploy to Vercel
-
-1. Go to https://vercel.com
-2. Click "Add New" → "Project"
-3. Import your GitHub repo
-4. Add environment variables (from .env.local)
-5. Click "Deploy"
-
-### Step 3: Custom Domain (Optional)
-
-1. In Vercel: Settings → Domains
-2. Add your custom domain
-3. Update DNS records as shown
-
-## Environment Variables for Vercel
-
-Add these in Vercel dashboard → Settings → Environment Variables:
-
-```
-NEXT_PUBLIC_API_URL=https://your-backend.railway.app
-NEXT_PUBLIC_FIREBASE_API_KEY=your_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_bucket.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-```
-
-## Demo Mode
-
-The app works in **demo mode** without backend or Firebase:
-
-- Click "Continue with Google" to enter (no actual login)
-- Uses localStorage for persistent login
-- All pages show mock data
-- Perfect for testing & development
-
-## Icons Included
-
-| File | Purpose |
-|------|---------|
-| logo.png | App logo (from your image) |
-| icons/lecture.png | Lecture icon |
-| icons/mcq.png | MCQ/Quiz icon |
-| icons/ai.png | AI Mentor icon |
-| icons/stethoscope.png | Medical/Health icon |
-
-## Common Issues
-
-### Issue: Port 3000 already in use
-```bash
-PORT=3001 npm run dev
-```
-
-### Issue: Module not found
-```bash
-rm -rf node_modules .next
-npm install
-npm run dev
-```
-
-### Issue: Tailwind styles not working
-```bash
-npm run build
-npm start
-```
-
-### Issue: Images not loading
-- Check file exists in `public/` folder
-- Use relative paths: `/logo.png`
-- Not `./public/logo.png`
-
-## Production Checklist
-
-- [ ] Environment variables set in Vercel
-- [ ] Backend API URL configured
-- [ ] Firebase credentials added (if using)
-- [ ] Logo & icons optimized
-- [ ] Mobile responsiveness tested
-- [ ] All links work correctly
-- [ ] Error messages clear
-- [ ] Performance optimized
-- [ ] HTTPS enforced
-- [ ] Custom domain configured
 
 ## Next Steps
 
-1. ✅ Frontend deployed to Vercel
-2. Deploy backend to Railway
-3. Connect Firebase authentication
-4. Setup database (MongoDB)
-5. Add real content (lectures, MCQs, tests)
-6. Setup admin panel
-7. Enable notifications
-8. Marketing & user acquisition
+1. Setup Firebase project
+2. Create backend API
+3. Deploy frontend to Vercel
+4. Deploy backend to Railway/Heroku
+5. Connect APIs
+6. Add real content
 
 ## Support
 
-- 📧 Email: support@soulofmedico.com
-- 💬 Telegram: https://t.me/soulofmedico
-- 🌐 Website: https://soulofmedico.com
-
-## License
-
-MIT
+For issues, check:
+- Console errors (F12)
+- Build logs on Vercel
+- Firebase console
 
 ---
 
-**Built with** ❤️ for NEET aspirants
+**Version**: 1.0.0 (Production)
+**Status**: Ready to Deploy

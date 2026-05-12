@@ -1,13 +1,20 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import { FiBook, FiCheckCircle, FiZap } from 'react-icons/fi'
+import { loginWithGoogle } from '../lib/firebase'
+import { useAuthStore } from '../lib/store'
+import { saveUser } from '../lib/api'
 
 interface GetStartedProps {
-  onLogin: (userData: any) => void
+  onLogin?: () => void
 }
 
 export default function GetStarted({ onLogin }: GetStartedProps) {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [currentStep, setCurrentStep] = useState(0)
+  const setUser = useAuthStore(state => state.setUser)
 
   const steps = [
     { icon: FiBook, title: 'Daily Lectures', description: 'Live lectures updated daily' },
@@ -17,21 +24,38 @@ export default function GetStarted({ onLogin }: GetStartedProps) {
 
   const handleGoogleLogin = async () => {
     setLoading(true)
+    setError('')
     try {
-      // Simulate login
+      const firebaseUser = await loginWithGoogle()
+      
       const userData = {
-        uid: Math.random().toString(),
-        email: 'user@example.com',
-        displayName: 'User',
-        photoURL: '',
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        photoURL: firebaseUser.photoURL,
+        isFirstLogin: false,
+        createdAt: new Date(),
+      }
+
+      try {
+        await saveUser(userData)
+      } catch (apiError) {
+        console.warn('Could not save user to backend, continuing anyway...')
       }
       
-      localStorage.setItem('user', JSON.stringify(userData))
-      localStorage.setItem('isFirstLogin', 'false')
+      setUser({
+        uid: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        displayName: firebaseUser.displayName || '',
+        photoURL: firebaseUser.photoURL || '',
+      })
       
-      onLogin(userData)
-    } catch (error) {
-      console.error('Login failed:', error)
+      if (onLogin) {
+        onLogin()
+      }
+    } catch (err: any) {
+      console.error('Login failed:', err)
+      setError(err.message || 'Login failed. Please try again.')
       setLoading(false)
     }
   }
@@ -81,10 +105,16 @@ export default function GetStarted({ onLogin }: GetStartedProps) {
           })}
         </div>
 
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full bg-white text-primary font-bold py-4 px-6 rounded-lg transition-all duration-300 hover:shadow-2xl hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-3"
+          className="w-full bg-white text-primary font-bold py-4 px-6 rounded-lg transition-all duration-300 hover:shadow-2xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
         >
           {loading ? (
             <>
@@ -100,7 +130,7 @@ export default function GetStarted({ onLogin }: GetStartedProps) {
         </button>
 
         <p className="text-white text-sm mt-6 opacity-70">
-          Demo mode: Click to continue
+          Secure login with your Google account
         </p>
       </div>
     </div>

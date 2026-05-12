@@ -10,9 +10,7 @@ export interface User {
 
 interface AuthStore {
   user: User | null | undefined
-  isFirstLogin: boolean
   setUser: (user: User | null) => void
-  setFirstLogin: (value: boolean) => void
   logout: () => void
 }
 
@@ -20,10 +18,8 @@ export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       user: undefined,
-      isFirstLogin: true,
-      setUser: (user) => set({ user, isFirstLogin: !user }),
-      setFirstLogin: (value) => set({ isFirstLogin: value }),
-      logout: () => set({ user: null, isFirstLogin: true }),
+      setUser: (user) => set({ user }),
+      logout: () => set({ user: null }),
     }),
     {
       name: 'auth-store',
@@ -31,37 +27,38 @@ export const useAuthStore = create<AuthStore>()(
   )
 )
 
-interface DownloadedContent {
-  id: string
-  type: 'video' | 'pdf'
-  title: string
-  path: string
-  downloadedAt: number
+interface PerformanceData {
+  userId: string
+  totalMCQsAttempted: number
+  totalTestsTaken: number
+  overallAccuracy: number
+  studyStreak: number
+  weakTopics: string[]
 }
 
-interface DownloadStore {
-  downloads: DownloadedContent[]
-  addDownload: (content: DownloadedContent) => void
-  removeDownload: (id: string) => void
-  getDownloads: () => DownloadedContent[]
+interface PerformanceStore {
+  performance: PerformanceData | null
+  setPerformance: (data: PerformanceData) => void
+  updateStreak: () => void
 }
 
-export const useDownloadStore = create<DownloadStore>()(
+export const usePerformanceStore = create<PerformanceStore>()(
   persist(
-    (set, get) => ({
-      downloads: [],
-      addDownload: (content) =>
-        set((state) => ({
-          downloads: [...state.downloads, content],
-        })),
-      removeDownload: (id) =>
-        set((state) => ({
-          downloads: state.downloads.filter((d) => d.id !== id),
-        })),
-      getDownloads: () => get().downloads,
+    (set) => ({
+      performance: null,
+      setPerformance: (data) => set({ performance: data }),
+      updateStreak: () => set((state) => {
+        if (!state.performance) return state
+        return {
+          performance: {
+            ...state.performance,
+            studyStreak: state.performance.studyStreak + 1,
+          }
+        }
+      }),
     }),
     {
-      name: 'download-store',
+      name: 'performance-store',
     }
   )
 )
